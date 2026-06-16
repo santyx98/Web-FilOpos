@@ -395,6 +395,7 @@ h1, h2, h3, .hero__title {
 .about__bio {
   color: var(--clr-brown);
   line-height: 1.75;
+  margin-top: 1rem;
   margin-bottom: 1.75rem;
   font-size: .97rem;
 }
