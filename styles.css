@@ -101,7 +101,7 @@ h1, h2, h3, .hero__title {
   font-family: var(--ff-body);
   font-size: .9rem;
   font-weight: 600;
-  padding: .72rem 1.55rem;
+  padding: .73rem 1.55rem;
   border-radius: 100px;
   cursor: pointer;
   border: none;
