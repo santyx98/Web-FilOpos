@@ -1091,6 +1091,16 @@ details[open] .temario-desplegable__icon {
   background: linear-gradient(180deg, #fff 0%, #FFF9F5 100%);
   box-shadow: var(--shadow-card);
   padding: 1rem;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+.motivation-carousel__viewport--dragging {
+  cursor: grabbing;
+  scroll-behavior: auto;
+}
+.motivation-carousel__viewport--dragging .motivation-carousel__item img {
+  pointer-events: none;
 }
 
 .motivation-carousel__viewport::-webkit-scrollbar {

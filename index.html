@@ -474,6 +474,9 @@
               <li>1 bloque = 8€ por tema</li>
               <li>Todos los bloques = 7€ por tema</li>
             </ul>
+            
+            <p class="pricing__price pricing__price--old">190€</p>
+            <p class="pricing__price pricing__price--new">150€</p>
           </article>
 
           <article class="card pricing pricing--featured">
@@ -502,7 +505,7 @@
               <li>Todas las unidades = 9€ cada unidad</li>
               <li>1 hora de video explicativo sobre la programación, unidades y cómo exponerlo = 15€</li>
             </ul>
-            <p class="pricing__price pricing__price--old">100€</p>
+            <p class="pricing__price pricing__price--old">190€</p>
             <p class="pricing__price pricing__price--new">150€</p>
             
           </article>
@@ -637,12 +640,6 @@
               <figure class="motivation-carousel__item">
                 <img src="assets/facebook%20clau%20opinion.png" alt="Publicación de Facebook con opinión sobre el trabajo docente">
               </figure>
-              <figure class="motivation-carousel__item" aria-hidden="true">
-                <img src="assets/wasap%20clau%20opinion.png" alt="">
-              </figure>
-              <figure class="motivation-carousel__item" aria-hidden="true">
-                <img src="assets/facebook%20clau%20opinion.png" alt="">
-              </figure>
             </div>
           </div>
 
@@ -650,6 +647,7 @@
         </div>
       </div>
     </section>
+
   </main>
 
   <!-- ===================== FOOTER ===================== -->
@@ -732,12 +730,29 @@
       let autoScrollFrame = null;
       let paused = false;
       let step = 0;
-      const speed = 0.35;
+      const speed = 0.12; // desplazamiento continuo muy lento
+
+      // Estado del arrastre (ratón / táctil, unificado vía Pointer Events)
+      let isDragging = false;
+      let dragMoved = false;
+      let dragStartX = 0;
+      let dragStartScrollLeft = 0;
 
       function measureStep() {
         const gap = parseFloat(getComputedStyle(track).gap || '0');
         const width = firstItem ? firstItem.getBoundingClientRect().width : viewport.clientWidth;
         step = width + gap;
+      }
+
+      function normalizeLoop() {
+        const halfWidth = track.scrollWidth / 2;
+        if (halfWidth <= 0) return;
+        while (viewport.scrollLeft >= halfWidth) {
+          viewport.scrollLeft -= halfWidth;
+        }
+        while (viewport.scrollLeft < 0) {
+          viewport.scrollLeft += halfWidth;
+        }
       }
 
       function scrollByStep(direction) {
@@ -746,12 +761,9 @@
       }
 
       function loopScroll() {
-        if (!paused && !isReducedMotion) {
+        if (!paused && !isDragging && !isReducedMotion) {
           viewport.scrollLeft += speed;
-          const halfWidth = track.scrollWidth / 2;
-          if (viewport.scrollLeft >= halfWidth) {
-            viewport.scrollLeft -= halfWidth;
-          }
+          normalizeLoop();
         }
         autoScrollFrame = window.requestAnimationFrame(loopScroll);
       }
@@ -761,11 +773,49 @@
 
       viewport.addEventListener('pointerenter', () => { paused = true; });
       viewport.addEventListener('pointerleave', () => { paused = false; });
-      viewport.addEventListener('touchstart', () => { paused = true; }, { passive: true });
-      viewport.addEventListener('touchend', () => { paused = false; }, { passive: true });
       viewport.addEventListener('keydown', (event) => {
         if (event.key === 'ArrowLeft') scrollByStep(-1);
         if (event.key === 'ArrowRight') scrollByStep(1);
+      });
+
+      // ── Arrastrar para deslizar (ratón y táctil) ──
+      viewport.addEventListener('pointerdown', (event) => {
+        isDragging = true;
+        dragMoved = false;
+        paused = true;
+        dragStartX = event.clientX;
+        dragStartScrollLeft = viewport.scrollLeft;
+        viewport.classList.add('motivation-carousel__viewport--dragging');
+        viewport.setPointerCapture(event.pointerId);
+      });
+
+      viewport.addEventListener('pointermove', (event) => {
+        if (!isDragging) return;
+        const delta = event.clientX - dragStartX;
+        if (Math.abs(delta) > 3) dragMoved = true;
+        viewport.scrollLeft = dragStartScrollLeft - delta;
+      });
+
+      function endDrag(event) {
+        if (!isDragging) return;
+        isDragging = false;
+        paused = false;
+        viewport.classList.remove('motivation-carousel__viewport--dragging');
+        normalizeLoop();
+        if (event && event.pointerId !== undefined && viewport.hasPointerCapture(event.pointerId)) {
+          viewport.releasePointerCapture(event.pointerId);
+        }
+      }
+
+      viewport.addEventListener('pointerup', endDrag);
+      viewport.addEventListener('pointercancel', endDrag);
+
+      // Evita que un arrastre se interprete como clic en una imagen
+      viewport.addEventListener('click', (event) => {
+        if (dragMoved) {
+          event.preventDefault();
+          dragMoved = false;
+        }
       });
 
       measureStep();
