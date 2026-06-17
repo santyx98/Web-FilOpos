@@ -69,12 +69,12 @@
         <div class="hero__visual" aria-hidden="true">
           <div class="ficha ficha--hero">
             <div class="ficha__ring"></div>
-            <span class="ficha__eyebrow">Tema 12</span>
-            <h3 class="ficha__title">La filosofía de Kant</h3>
+            <span class="ficha__eyebrow">Tema 50</span>
+            <h3 class="ficha__title">La Naturaleza en Aristóteles</h3>
             <p class="ficha__lines">
               <span></span><span></span><span></span><span class="short"></span>
             </p>
-            <span class="ficha__tag">Word editable</span>
+            <span class="ficha__tag">Edición digitalizada</span>
           </div>
           <span class="hand-note hand-note--hero">¡el mismo con el que aprobé!</span>
         </div>
@@ -83,6 +83,8 @@
 
     <!-- ===================== SOBRE MÍ ===================== -->
     <section class="section section--soft section--tight-top" id="sobre-mi">
+      
+      <p class="eyebrow eyebrow--center">Sobre Mí</p>
       <div class="container about">
         <div class="about__person">
           <div class="avatar">
@@ -90,10 +92,10 @@
           </div>
           <h2 class="about__name">Claudia Fernandez García</h2>
           <p class="about__plaza">Profesora de Enseñanza Secundaria, especialidad Filosofía</p>
+
         </div>
 
         <div class="about__content">
-          <p class="eyebrow">Sobre mí</p>
           <h2 class="section__title">Preparé la oposición con academia, sé lo que cuesta y tú no lo necesitarás.</h2>
           <p class="about__bio">
             Soy Claudia, profesora de Filosofía desde 2021. Durante los años que
@@ -106,7 +108,11 @@
             para que otras personas no tengan que empezar desde cero como hice yo. 
             Hoy sigo dando clase y, en paralelo, acompaño a opositores de toda España.
           </p>
-
+          <p class="about__bio">Puedes consultar mi LinkedIn para saber más sobre mi trayectoria profesional.</p>
+          <a class="about__linkedin" href="https://www.linkedin.com/in/claudiafernandezgarcia/" target="_blank" rel="noopener noreferrer">
+            <img src="assets/linkedin%20logo.webp" alt="Logo de LinkedIn">
+            <span>LinkedIn</span>
+          </a>
           <ul class="checklist">
             <li>
               <span class="check-icon" aria-hidden="true">✓</span>
@@ -468,8 +474,6 @@
               <li>1 bloque = 8€ por tema</li>
               <li>Todos los bloques = 7€ por tema</li>
             </ul>
-            <!-- <p class="pricing__price"></p> -->
-            <a href="#contacto" class="btn btn--ghost btn--full">Contáctame</a>
           </article>
 
           <article class="card pricing pricing--featured">
@@ -484,8 +488,7 @@
               <li>Acceso exclusivo a 1 hora de video explicativo sobre la programación, unidades y cómo exponer</li>
               <li>Atención por correo o WhatsApp</li>
             </ul>
-            <!-- <p class="pricing__price"></p> -->
-            <a href="#contacto" class="btn btn--primary btn--full">Contáctame</a>
+            <p class="pricing__price pricing__price--destacado">Precio más rebajado de cada opción!</p>
           </article>
 
           <article class="card pricing">
@@ -499,8 +502,8 @@
               <li>Todas las unidades = 9€ cada unidad</li>
               <li>1 hora de video explicativo sobre la programación, unidades y cómo exponerlo = 15€</li>
             </ul>
-            <!-- <p class="pricing__price">100€</p> -->
-            <a href="#contacto" class="btn btn--ghost btn--full">Contáctame</a>
+            <p class="pricing__price pricing__price--old">100€</p>
+            <p class="pricing__price pricing__price--new">150€</p>
             
           </article>
 
@@ -541,6 +544,7 @@
       >
         <div class="form-group">
           <label for="f-nombre">Nombre</label>
+
           <input type="text" id="f-nombre" name="nombre" placeholder="Tu nombre" required>
         </div>
 
@@ -610,7 +614,42 @@
   </div>
 </div>
     </section>
-    
+    <!-- ===================== MOTIVACIÓN ===================== -->
+    <section class="section section--soft section--tight-top motivation" id="motivacion">
+      <div class="container motivation__inner">
+        <div class="motivation__copy">
+          <p class="eyebrow eyebrow--center">Motivación</p>
+          <h2 class="section__title section__title--center">El esfuerzo tiene un motivo</h2>
+          <p class="motivation__text">
+            Conseguir tu plaza supone un gran esfuerzo, pero también una gran recompensa, no solo de tranquilidad o monetaria.
+            Te dejo con algunos de los mensajes que he recibido tanto de alumnos como padres sobre mi trabajo como docente.
+          </p>
+        </div>
+
+        <div class="motivation-carousel" aria-label="Carrusel de opiniones recibidas">
+          <button class="motivation-carousel__button motivation-carousel__button--prev" id="carousel-prev" aria-label="Imagen anterior">&#10094;</button>
+
+          <div class="motivation-carousel__viewport" id="carousel-viewport" tabindex="0">
+            <div class="motivation-carousel__track" id="carousel-track">
+              <figure class="motivation-carousel__item">
+                <img src="assets/wasap%20clau%20opinion.png" alt="Mensaje de WhatsApp con opinión sobre el trabajo docente">
+              </figure>
+              <figure class="motivation-carousel__item">
+                <img src="assets/facebook%20clau%20opinion.png" alt="Publicación de Facebook con opinión sobre el trabajo docente">
+              </figure>
+              <figure class="motivation-carousel__item" aria-hidden="true">
+                <img src="assets/wasap%20clau%20opinion.png" alt="">
+              </figure>
+              <figure class="motivation-carousel__item" aria-hidden="true">
+                <img src="assets/facebook%20clau%20opinion.png" alt="">
+              </figure>
+            </div>
+          </div>
+
+          <button class="motivation-carousel__button motivation-carousel__button--next" id="carousel-next" aria-label="Imagen siguiente">&#10095;</button>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- ===================== FOOTER ===================== -->
@@ -626,7 +665,7 @@
   </footer>
 
 
-  <-- ===================== SCRIPTS ===================== -->
+  <!-- ===================== SCRIPTS ===================== -->
   <script>
     const form = document.getElementById('contacto-form');
     const formWrap = document.getElementById('modal-form-wrap');
@@ -674,6 +713,73 @@
         }, 300);
       }
     });
+  </script>
+  <script>
+    (function () {
+      const viewport = document.getElementById('carousel-viewport');
+      const track = document.getElementById('carousel-track');
+      const prevButton = document.getElementById('carousel-prev');
+      const nextButton = document.getElementById('carousel-next');
+
+      if (!viewport || !track || !prevButton || !nextButton) {
+        return;
+      }
+
+      const items = Array.from(track.querySelectorAll('.motivation-carousel__item'));
+      const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const baseItems = items.slice(0, items.length / 2);
+      const firstItem = baseItems[0];
+      let autoScrollFrame = null;
+      let paused = false;
+      let step = 0;
+      const speed = 0.35;
+
+      function measureStep() {
+        const gap = parseFloat(getComputedStyle(track).gap || '0');
+        const width = firstItem ? firstItem.getBoundingClientRect().width : viewport.clientWidth;
+        step = width + gap;
+      }
+
+      function scrollByStep(direction) {
+        measureStep();
+        viewport.scrollBy({ left: step * direction, behavior: 'smooth' });
+      }
+
+      function loopScroll() {
+        if (!paused && !isReducedMotion) {
+          viewport.scrollLeft += speed;
+          const halfWidth = track.scrollWidth / 2;
+          if (viewport.scrollLeft >= halfWidth) {
+            viewport.scrollLeft -= halfWidth;
+          }
+        }
+        autoScrollFrame = window.requestAnimationFrame(loopScroll);
+      }
+
+      prevButton.addEventListener('click', () => scrollByStep(-1));
+      nextButton.addEventListener('click', () => scrollByStep(1));
+
+      viewport.addEventListener('pointerenter', () => { paused = true; });
+      viewport.addEventListener('pointerleave', () => { paused = false; });
+      viewport.addEventListener('touchstart', () => { paused = true; }, { passive: true });
+      viewport.addEventListener('touchend', () => { paused = false; }, { passive: true });
+      viewport.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowLeft') scrollByStep(-1);
+        if (event.key === 'ArrowRight') scrollByStep(1);
+      });
+
+      measureStep();
+      if (!isReducedMotion) {
+        autoScrollFrame = window.requestAnimationFrame(loopScroll);
+      }
+
+      window.addEventListener('resize', measureStep);
+      window.addEventListener('beforeunload', () => {
+        if (autoScrollFrame) {
+          window.cancelAnimationFrame(autoScrollFrame);
+        }
+      });
+    })();
   </script>
 </body>
 </html>
