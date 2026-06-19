@@ -630,20 +630,29 @@
         </div>
 
         <div class="motivation-carousel" aria-label="Carrusel de opiniones recibidas">
-          <button class="motivation-carousel__button motivation-carousel__button--prev" id="carousel-prev" aria-label="Imagen anterior">&#10094;</button>
+          <button type="button" class="motivation-carousel__button motivation-carousel__button--prev" id="carousel-prev" aria-label="Imagen anterior">&#10094;</button>
 
-          <div class="motivation-carousel__viewport" id="carousel-viewport" tabindex="0">
+          <div class="motivation-carousel__viewport" id="carousel-viewport">
             <div class="motivation-carousel__track" id="carousel-track">
-              <figure class="motivation-carousel__item">
-                <img src="assets/wasap%20clau%20opinion.png" alt="Mensaje de WhatsApp con opinión sobre el trabajo docente">
+              <figure class="motivation-carousel__item" data-index="0">
+                <img src="assets/filoclaus.jpg" alt="Mensaje de WhatsApp con opinión sobre el trabajo docente">
               </figure>
-              <figure class="motivation-carousel__item">
-                <img src="assets/facebook%20clau%20opinion.png" alt="Publicación de Facebook con opinión sobre el trabajo docente">
+              <figure class="motivation-carousel__item" data-index="1">
+                <img src="assets/precios miguel opos.jpg" alt="Publicación de Facebook con opinión sobre el trabajo docente">
+              </figure>
+              <figure class="motivation-carousel__item" data-index="2">
+                <img src="assets/wasap clau opinion.png" alt="Mensaje de WhatsApp con opinión sobre el trabajo docente">
               </figure>
             </div>
           </div>
 
-          <button class="motivation-carousel__button motivation-carousel__button--next" id="carousel-next" aria-label="Imagen siguiente">&#10095;</button>
+          <button type="button" class="motivation-carousel__button motivation-carousel__button--next" id="carousel-next" aria-label="Imagen siguiente">&#10095;</button>
+
+          <div class="motivation-carousel__dots" id="carousel-dots">
+            <button class="motivation-carousel__dot motivation-carousel__dot--active" data-slide="0" aria-label="Ir a imagen 1"></button>
+            <button class="motivation-carousel__dot" data-slide="1" aria-label="Ir a imagen 2"></button>
+            <button class="motivation-carousel__dot" data-slide="2" aria-label="Ir a imagen 3"></button>
+          </div>
         </div>
       </div>
     </section>
@@ -714,121 +723,113 @@
   </script>
   <script>
     (function () {
-      const viewport = document.getElementById('carousel-viewport');
       const track = document.getElementById('carousel-track');
-      const prevButton = document.getElementById('carousel-prev');
-      const nextButton = document.getElementById('carousel-next');
+      const viewport = document.getElementById('carousel-viewport');
+      const prevBtn = document.getElementById('carousel-prev');
+      const nextBtn = document.getElementById('carousel-next');
+      const dotsContainer = document.getElementById('carousel-dots');
 
-      if (!viewport || !track || !prevButton || !nextButton) {
-        return;
-      }
+      if (!track || !viewport || !prevBtn || !nextBtn) return;
+
+      const realItems = Array.from(track.querySelectorAll('.motivation-carousel__item'));
+      const total = realItems.length;
+      if (!total) return;
+
+      const firstClone = realItems[0].cloneNode(true);
+      const lastClone = realItems[total - 1].cloneNode(true);
+      firstClone.classList.add('motivation-carousel__item--clone');
+      lastClone.classList.add('motivation-carousel__item--clone');
+      firstClone.setAttribute('aria-hidden', 'true');
+      lastClone.setAttribute('aria-hidden', 'true');
+
+      track.insertBefore(lastClone, realItems[0]);
+      track.appendChild(firstClone);
 
       const items = Array.from(track.querySelectorAll('.motivation-carousel__item'));
-      const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const baseItems = items.slice(0, items.length / 2);
-      const firstItem = baseItems[0];
-      let autoScrollFrame = null;
-      let paused = false;
-      let step = 0;
-      const speed = 0.12; // desplazamiento continuo muy lento
+      let current = 1;
+      let autoTimer = null;
+      let resetTimer = null;
 
-      // Estado del arrastre (ratón / táctil, unificado vía Pointer Events)
-      let isDragging = false;
-      let dragMoved = false;
-      let dragStartX = 0;
-      let dragStartScrollLeft = 0;
-
-      function measureStep() {
-        const gap = parseFloat(getComputedStyle(track).gap || '0');
-        const width = firstItem ? firstItem.getBoundingClientRect().width : viewport.clientWidth;
-        step = width + gap;
+      function logicalIndex(physicalIndex) {
+        if (physicalIndex <= 0) return total - 1;
+        if (physicalIndex >= total + 1) return 0;
+        return physicalIndex - 1;
       }
 
-      function normalizeLoop() {
-        const halfWidth = track.scrollWidth / 2;
-        if (halfWidth <= 0) return;
-        while (viewport.scrollLeft >= halfWidth) {
-          viewport.scrollLeft -= halfWidth;
-        }
-        while (viewport.scrollLeft < 0) {
-          viewport.scrollLeft += halfWidth;
-        }
+      function scrollToItem(physicalIndex, smooth) {
+        const item = items[physicalIndex];
+        const offset = item.offsetLeft;
+        const centeredLeft = offset - ((viewport.clientWidth - item.offsetWidth) / 2);
+        viewport.scrollTo({ left: centeredLeft, behavior: smooth === false ? 'auto' : 'smooth' });
       }
 
-      function scrollByStep(direction) {
-        measureStep();
-        viewport.scrollBy({ left: step * direction, behavior: 'smooth' });
-      }
+      function markState() {
+        const activeLogical = logicalIndex(current);
+        items.forEach((item, i) => {
+          const logical = logicalIndex(i);
+          item.classList.toggle('motivation-carousel__item--active', i === current);
+          item.classList.toggle('motivation-carousel__item--adjacent', logical === (activeLogical - 1 + total) % total || logical === (activeLogical + 1) % total);
+        });
 
-      function loopScroll() {
-        if (!paused && !isDragging && !isReducedMotion) {
-          viewport.scrollLeft += speed;
-          normalizeLoop();
-        }
-        autoScrollFrame = window.requestAnimationFrame(loopScroll);
-      }
-
-      prevButton.addEventListener('click', () => scrollByStep(-1));
-      nextButton.addEventListener('click', () => scrollByStep(1));
-
-      viewport.addEventListener('pointerenter', () => { paused = true; });
-      viewport.addEventListener('pointerleave', () => { paused = false; });
-      viewport.addEventListener('keydown', (event) => {
-        if (event.key === 'ArrowLeft') scrollByStep(-1);
-        if (event.key === 'ArrowRight') scrollByStep(1);
-      });
-
-      // ── Arrastrar para deslizar (ratón y táctil) ──
-      viewport.addEventListener('pointerdown', (event) => {
-        isDragging = true;
-        dragMoved = false;
-        paused = true;
-        dragStartX = event.clientX;
-        dragStartScrollLeft = viewport.scrollLeft;
-        viewport.classList.add('motivation-carousel__viewport--dragging');
-        viewport.setPointerCapture(event.pointerId);
-      });
-
-      viewport.addEventListener('pointermove', (event) => {
-        if (!isDragging) return;
-        const delta = event.clientX - dragStartX;
-        if (Math.abs(delta) > 3) dragMoved = true;
-        viewport.scrollLeft = dragStartScrollLeft - delta;
-      });
-
-      function endDrag(event) {
-        if (!isDragging) return;
-        isDragging = false;
-        paused = false;
-        viewport.classList.remove('motivation-carousel__viewport--dragging');
-        normalizeLoop();
-        if (event && event.pointerId !== undefined && viewport.hasPointerCapture(event.pointerId)) {
-          viewport.releasePointerCapture(event.pointerId);
+        if (dotsContainer) {
+          Array.from(dotsContainer.querySelectorAll('.motivation-carousel__dot')).forEach((d, i) => {
+            d.classList.toggle('motivation-carousel__dot--active', i === activeLogical);
+          });
         }
       }
 
-      viewport.addEventListener('pointerup', endDrag);
-      viewport.addEventListener('pointercancel', endDrag);
-
-      // Evita que un arrastre se interprete como clic en una imagen
-      viewport.addEventListener('click', (event) => {
-        if (dragMoved) {
-          event.preventDefault();
-          dragMoved = false;
+      function settleEdge(targetPhysical) {
+        if (resetTimer) {
+          clearTimeout(resetTimer);
+          resetTimer = null;
         }
-      });
 
-      measureStep();
-      if (!isReducedMotion) {
-        autoScrollFrame = window.requestAnimationFrame(loopScroll);
+        if (targetPhysical === 0) {
+          resetTimer = setTimeout(() => {
+            current = total;
+            scrollToItem(current, false);
+            markState();
+          }, 620);
+        } else if (targetPhysical === total + 1) {
+          resetTimer = setTimeout(() => {
+            current = 1;
+            scrollToItem(current, false);
+            markState();
+          }, 620);
+        }
       }
 
-      window.addEventListener('resize', measureStep);
-      window.addEventListener('beforeunload', () => {
-        if (autoScrollFrame) {
-          window.cancelAnimationFrame(autoScrollFrame);
-        }
-      });
+      function goTo(targetPhysical, smooth) {
+        current = targetPhysical;
+        scrollToItem(current, smooth);
+        markState();
+        settleEdge(current);
+      }
+
+      function startAuto() {
+        stopAuto();
+        autoTimer = setInterval(() => goTo(current + 1), 6500);
+      }
+
+      function stopAuto() {
+        if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+      }
+
+      prevBtn.addEventListener('click', () => { goTo(current - 1, true); stopAuto(); startAuto(); });
+      nextBtn.addEventListener('click', () => { goTo(current + 1, true); stopAuto(); startAuto(); });
+
+      if (dotsContainer) {
+        dotsContainer.querySelectorAll('.motivation-carousel__dot').forEach((dot, i) => {
+          dot.addEventListener('click', () => { goTo(i + 1, true); stopAuto(); startAuto(); });
+        });
+      }
+
+      // Pausa al pasar el ratón
+      viewport.addEventListener('mouseenter', stopAuto);
+      viewport.addEventListener('mouseleave', startAuto);
+
+      goTo(1, false);
+      startAuto();
     })();
   </script>
 </body>
